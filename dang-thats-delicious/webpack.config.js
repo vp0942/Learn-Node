@@ -82,7 +82,8 @@ const config = {
     filename: "[name].bundle.js",
   },
 
-  // remember we said webpack sees everthing as modules and how different loaders are responsible for different file types? Here is is where we implement them. Pass it the rules for our JS and our styles
+  // remember we said webpack sees everthing as modules and how different loaders are responsible
+  // for different file types? Here is where we implement them. Pass it the rules for our JS and our styles
   module: {
     rules: [javascript, styles],
   },
