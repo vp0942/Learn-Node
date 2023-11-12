@@ -1,14 +1,14 @@
-exports.myMiddleware = (req, res, next) => {
-  req.name = 'Wes';
-  res.cookie('name', 'Wes is cool', { maxAge: 900000 });
-  if (req.name === 'Wes') {
-    throw Error('That is a stupid name');
-  }
-  // next() will call the next middleware in the chain
-  next();
-}
-
 exports.homePage = (req, res) => {
   console.log(req.name);
   res.render('index');
+}
+
+exports.addStore = (req,res) => {
+  // We reuse the same template for editing and adding stores
+  res.render('editStore', {title: 'Add Store'});
+}
+
+exports.createStore = async (req,res) => {
+  console.log(req.body)
+  res.json(req.body);
 }
