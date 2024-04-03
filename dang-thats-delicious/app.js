@@ -50,7 +50,7 @@ app.use(flash());
 
 // pass variables to our templates + all requests
 app.use((req, res, next) => {
-  res.locals.h = helpers;
+  res.locals.h = helpers; // set variables accessible in templates rendered with res.render
   res.locals.flashes = req.flash();
   res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 // from ./routes/index.js
 app.use('/', routes);
 
-// If that ABOVE routes didnt work, we 404 them and forward to error handler -> next(err)
+// If that ABOVE routes didn't work, we 404 them and forward to error handler -> next(err)
 app.use(errorHandlers.notFound);
 
 // One of our error handlers will see if these errors are just validation errors
@@ -85,3 +85,4 @@ app.use(errorHandlers.productionErrors);
 
 // done! we export it so we can start the site in start.js
 module.exports = app;
+
