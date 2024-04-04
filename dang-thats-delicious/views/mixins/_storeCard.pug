@@ -1,0 +1,6 @@
+mixin storeCard(store = {})
+  .store
+    .store__hero
+      img(src=`/uploads/${store.photo || 'store.png'}`, alt=store.name)
+      h2.title
+        a(href=`/store/${store.slug}`)= store.name
