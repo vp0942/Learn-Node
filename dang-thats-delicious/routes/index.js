@@ -4,18 +4,13 @@ const router = express.Router();
 
 const { catchErrors } = require('../handlers/errorHandlers');
 
-// Do work here
+// catchErrors() middleware will catch any errors thrown by the handlers
+// and pass them to the errorHandlers.js file
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
 router.get('/add', storeController.addStore);
-// catchErrors() will catch any errors thrown by the create Store async function
-// and pass them to the errorHandlers.js file
 router.post('/add', catchErrors(storeController.createStore));
-
-router.get('/reverse/:name', (req, res) => {
-  const reverse = [...req.params.name].reverse().join('');
-  res.send(reverse);
-  // res.send(req.params.name);
-});
+router.post('/add/:id', catchErrors(storeController.updateStore));
+router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 
 module.exports = router;
