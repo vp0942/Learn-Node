@@ -35,6 +35,7 @@ const storeSchema = new mongoose.Schema({
       required: "You must supply an address!"
     }
   },
+  photo: String,
 });
 
 // Pre-save hook -> before saving the store, we create an url friendly slug
