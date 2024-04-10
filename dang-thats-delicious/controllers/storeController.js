@@ -106,4 +106,11 @@ exports.updateStore = async (req,res) => {
   // Redirect them to the store and tell them it worked
 }
 
+exports.getStoreBySlug = async (req,res,next) => {
+  const store = await Store.findOne({slug: req.params.slug});
+  // If the store does not exist (null), skip to the next middleware
+  if (!store) return next();
+  res.render('store', {store, title: store.name});
+}
+
 
