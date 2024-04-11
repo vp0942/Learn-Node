@@ -113,4 +113,12 @@ exports.getStoreBySlug = async (req,res,next) => {
   res.render('store', {store, title: store.name});
 }
 
+exports.getStoresByTag = async (req,res) => {
+  // Get the tag from from the getTagsList() static method of the Store model
+  const tags = await Store.getTagsList();
+  // Get the tag from the URL and pass it to the tag.pug template to highlight the selected tag
+  const tag = req.params.tag;
+  res.render('tag', {tags, title: 'Tags', tag});
+}
+
 
