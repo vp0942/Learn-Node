@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise; // It is necessary to avoid a warning
 // Creates an url friendly slugs
 const slug = require("slugs");
 

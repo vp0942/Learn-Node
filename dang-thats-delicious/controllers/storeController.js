@@ -114,11 +114,17 @@ exports.getStoreBySlug = async (req,res,next) => {
 }
 
 exports.getStoresByTag = async (req,res) => {
-  // Get the tag from from the getTagsList() static method of the Store model
-  const tags = await Store.getTagsList();
   // Get the tag from the URL and pass it to the tag.pug template to highlight the selected tag
   const tag = req.params.tag;
-  res.render('tag', {tags, title: 'Tags', tag});
+  // If there is no specific tag selected, show all stores that have a tag
+  const tagQuery = tag || { $exists: true };
+  // Get the sorted tags array from the getTagsList() static method of the Store model
+  // and the stores that have a selected tag (or all stores if no tag is selected)
+  const tagsPromise = Store.getTagsList();
+  const storePromise = Store.find({tags: tagQuery});
+  // Wait for both promises to resolve
+  const [tags, stores] = await Promise.all([tagsPromise, storePromise]);
+  res.render('tag', {tags, title: 'Tags', tag, stores});
 }
 
 

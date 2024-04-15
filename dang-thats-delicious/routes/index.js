@@ -1,5 +1,7 @@
 const express = require('express');
 const storeController = require("../controllers/storeController");
+const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 const router = express.Router();
 
 const { catchErrors } = require('../handlers/errorHandlers');
@@ -25,5 +27,18 @@ router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
 
 router.get('/tags', catchErrors(storeController.getStoresByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));
+
+router.get('/login', userController.loginForm);
+router.get('/register', userController.registerForm);
+
+// We a chain of middleware functions to the register route:
+// 1. Validate the registration data
+// 2. Register the user
+// 3. Log them in automatically after registration
+router.post('/register',
+  userController.validateRegister,
+  userController.register,
+  authController.login
+);
 
 module.exports = router;

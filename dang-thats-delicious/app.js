@@ -10,6 +10,7 @@ const expressValidator = require('express-validator');
 const routes = require('./routes/index');
 const helpers = require('./helpers');
 const errorHandlers = require('./handlers/errorHandlers');
+require('./handlers/passport');
 
 // create our Express app
 const app = express();
@@ -26,7 +27,7 @@ app.use(express.json());
 // extended: true allows for parsing of complex objects
 app.use(express.urlencoded({ extended: true }));
 
-// Exposes a bunch of methods for validating data. Used heavily on userController.validateRegister
+// Exposes a bunch of methods for validating data at every single request. Used heavily on userController.validateRegister
 app.use(expressValidator());
 
 // populates req.cookies with any cookies that came along with the request

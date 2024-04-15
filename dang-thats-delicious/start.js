@@ -14,6 +14,7 @@ mongoose.connection.on('error', (err) => {
 
 // import all of our models
 require('./models/Store'); // this is a singleton by design, so it will only run once
+require('./models/User');
 
 
 // Start our app!
