@@ -20,14 +20,17 @@ const userSchema = new Schema({
     type: String,
     required: 'Please supply a name',
     trim: true
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 // Gravatar is a service for providing globally unique avatars
 // We create a virtual field 'gravatar' that is not stored in the database
 // It is created on the fly when we access it
 // We use a function instead of an arrow function because we need the 'this' keyword
-userSchema.virtual('gravatar').get(function() {
+// Then we use it as a property of the user object (user.gravatar)
+userSchema.virtual('gravatar').get(function () {
   // We use the md5 library to hash the email
   const hash = md5(this.email);
   // We return the url of the gravatar image
