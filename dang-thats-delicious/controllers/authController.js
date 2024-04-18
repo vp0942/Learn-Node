@@ -5,6 +5,7 @@ const promisify = require('es6-promisify');
 // crypto is a core module of node.js
 // It is used to generate random tokens
 const crypto = require('crypto');
+const mail = require('../handlers/mail');
 
 // We are using the passport
 // We will use the local strategy to authenticate users
@@ -50,7 +51,13 @@ exports.forgot = async (req, res) => {
   await user.save(); // save the user with the reset token and expiry
   // 3. Send them an email with the token
   const resetURL = `http://${req.headers.host}/account/reset/${user.resetPasswordToken}`;
-  req.flash('success', `You have been emailed a password reset link. ${resetURL}`);// Don't expose ${resetURL} in production!!!
+  mail.send({
+    user,
+    subject: 'Password Reset',
+    resetURL,
+    filename: 'password-reset' // This is the pug template that we will use
+  });
+  req.flash('success', `You have been emailed a password reset link.`);// Don't expose ${resetURL} in production!!!
   // 4. Redirect to login page
   res.redirect('/login');
 };

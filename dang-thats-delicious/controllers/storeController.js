@@ -26,6 +26,7 @@ const jimp = require('jimp');
 // This library is used to generate unique ids
 const uuid = require('uuid');
 
+// This is the homePage controller
 exports.homePage = (req, res) => {
   console.log(req.name);
   // req.flash() is a method from the flash middleware that we imported in app.js
@@ -34,6 +35,7 @@ exports.homePage = (req, res) => {
   res.render('index');
 }
 
+// This is the addStore controller
 exports.addStore = (req,res) => {
   // We reuse the same template for editing and adding stores
   // The path to the template is views/editStore.pug
@@ -70,12 +72,15 @@ exports.resize = async (req,res,next) => {
 // Create store follows after the upload and resize middlewares
 exports.createStore = async (req,res) => {
   // console.log(req.body);
+  // We set the author of the store to the current user
+  req.body.author = req.user._id;
   const store = await (new Store(req.body)).save();
   // flash() is a method from the flash middleware that we imported in app.js
   req.flash('success', `Successfully created ${store.name}. Care to leave a review?`);
   res.redirect(`/store/${store.slug}`);
 }
 
+// This is the getStores controller
 exports.getStores = async (req,res) => {
   // 1. Query the database for a list of all stores
   const stores = await Store.find();
@@ -84,14 +89,24 @@ exports.getStores = async (req,res) => {
   res.render('stores', {title: 'Stores', stores});
 }
 
+// This helper function checks if the user is the owner of the store
+const confirmOwner = (store, user) => {
+  if (!store.author.equals(user._id)) { // equals() is a mongoose method
+    throw Error('You must own a store in order to edit it!');
+  }
+};
+
+// This is the editStore controller
 exports.editStore = async (req,res) => {
   // 1. Find the store given the ID
   const store = await Store.findOne({_id: req.params.id});
   // 2. Confirm they are the owner of the store
+  confirmOwner(store, req.user);
   // 3. Render out the edit form so the user can update their store
   res.render('editStore', {title: `Edit ${store.name}`, store});
 }
 
+// This is the updateStore controller
 exports.updateStore = async (req,res) => {
   // Set the location data to be a point
   // For some reasons the default value for location.type is not being set
@@ -106,13 +121,19 @@ exports.updateStore = async (req,res) => {
   // Redirect them to the store and tell them it worked
 }
 
+// This is the getStoreBySlug controller
 exports.getStoreBySlug = async (req,res,next) => {
-  const store = await Store.findOne({slug: req.params.slug});
+  // Find the store by the slug
+  // We use the populate() method to get the author of the store from the User model
+  // The author field in the Store model is a reference to the User model
+  // The populate() method will replace the author id with the author object so we can access the author's name and email...
+  const store = await Store.findOne({slug: req.params.slug}).populate('author');
   // If the store does not exist (null), skip to the next middleware
   if (!store) return next();
   res.render('store', {store, title: store.name});
 }
 
+// This is the getStoresByTag controller
 exports.getStoresByTag = async (req,res) => {
   // Get the tag from the URL and pass it to the tag.pug template to highlight the selected tag
   const tag = req.params.tag;

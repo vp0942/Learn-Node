@@ -2,9 +2,12 @@ mixin storeCard(store = {})
   .store
     .store__hero
       .store__actions
-        .store__action.store__action--edit
-          a(href=`/stores/${store._id}/edit`) Edit
-            != h.icon('pencil')
+        //- pre= h.dump(store.author)
+        //- We do not populate the author in this case
+        if user && store.author.equals(user._id)
+          .store__action.store__action--edit
+            a(href=`/stores/${store._id}/edit`) Edit
+              != h.icon('pencil')
       img(src=`/uploads/${store.photo || 'store.png'}`, alt=store.name)
       h2.title
         a(href=`/store/${store.slug}`)= store.name
