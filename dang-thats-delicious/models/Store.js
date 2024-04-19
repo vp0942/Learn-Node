@@ -43,6 +43,12 @@ const storeSchema = new mongoose.Schema({
   }
 });
 
+// Define our indexes to improve the performance of our queries
+storeSchema.index({
+  name: "text",
+  description: "text"
+});
+
 // Pre-save hook -> before saving the store, we create an url friendly slug
 // we use a function instead of an arrow function because we need the 'this' keyword
 storeSchema.pre("save", async function(next) {

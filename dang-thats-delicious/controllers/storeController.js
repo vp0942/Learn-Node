@@ -148,4 +148,25 @@ exports.getStoresByTag = async (req,res) => {
   res.render('tag', {tags, title: 'Tags', tag, stores});
 }
 
+// This is the searchStores controller (API)
+exports.searchStores = async (req,res) => {
+  // Find stores that match the search query
+  const stores = await Store
+  // first find stores that match the search query
+  .find({
+    $text: {
+      $search: req.query.q
+    }
+  }, { // We use the projection object to include the textScore in the result
+    score: { $meta: 'textScore' } // textScore is a meta field
+  })
+  // then sort the stores by the textScore
+  .sort({
+    score: { $meta: 'textScore' }
+  })
+  // Limit the number of results to 5
+  .limit(5);
+  res.json(stores);
+}
+
 
