@@ -10,9 +10,13 @@ exports.registerForm = (req, res) => {
   res.render('register', { title: 'Register' });
 }
 
+// This is a middleware that validates the registration data
+// It uses the express-validator library
+// The librabry is loaded in app.js with the line app.use(expressValidator());
+// It adds some methods to the request object (req)
 exports.validateRegister = (req, res, next) => {
-  req.sanitizeBody('name');
-  req.checkBody('name', 'You must supply a name!').notEmpty();
+  req.sanitizeBody('name'); // sanitizeBody is a method from express-validator
+  req.checkBody('name', 'You must supply a name!').notEmpty(); // checkBody is a method from express-validator
   req.checkBody('email', 'That Email is not valid!').isEmail();
   req.sanitizeBody('email').normalizeEmail({
     gmail_remove_dots: false,

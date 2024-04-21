@@ -28,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Exposes a bunch of methods for validating data at every single request. Used heavily on userController.validateRegister
+// The methods are attached to the req object !!!
 app.use(expressValidator());
 
 // populates req.cookies with any cookies that came along with the request
