@@ -49,6 +49,10 @@ storeSchema.index({
   description: "text"
 });
 
+storeSchema.index({
+  location: "2dsphere"
+});
+
 // Pre-save hook -> before saving the store, we create an url friendly slug
 // we use a function instead of an arrow function because we need the 'this' keyword
 storeSchema.pre("save", async function(next) {

@@ -34,11 +34,11 @@ function typeAhead(search) {
 
     // Make a request to the search endpoint
     axious
-      .get(`/api/search?q=${this.value}`)
+      .get(`/api/search?q=${this.value}`) // searchInput.value
       .then(res => {
         // console.log(res.data);
-        if (res.data.length) {
-          searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data));
+        if (res.data.length) { // If there are search results
+          searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data)); // Santize the user input
           return;
         }
         // Tell the user that nothing was found
@@ -81,6 +81,7 @@ function typeAhead(search) {
       current.classList.remove(activeClass);
     }
     // Add the active class to the next search result
+    // Now we can use the active class to select the 'current' active element
     next.classList.add(activeClass);
   })
 }

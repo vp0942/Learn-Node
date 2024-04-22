@@ -169,4 +169,27 @@ exports.searchStores = async (req,res) => {
   res.json(stores);
 }
 
+// This is the mapStores controller (API)
+exports.mapStores = async (req,res) => {
+  // Get the coordinates from the request query (by clicking on the map in the frontend)
+  const coordinates = [req.query.lng, req.query.lat].map(parseFloat); // In MongoDB, the order is longitude, latitude
+  // Find stores near the coordinates
+  const q = {
+    location: {
+      $near: { // $near is a MongoDB operator that finds the closest stores to the coordinates
+        $geometry: { // $geometry is a MongoDB operator that defines the type and coordinates of the point (2dsphere)
+          type: 'Point',
+          coordinates
+        },
+        $maxDistance: 10000 // 10km
+      }
+    }
+  };
+  // Find the stores that match the query
+  // We only select the fields that we need (slug, name, description, location, photo)
+  // We limit the number of closest 10 stores
+  const stores = await Store.find(q).select('slug name description location photo').limit(10);
+  res.json(stores);
+}
+
 
