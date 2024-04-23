@@ -192,4 +192,9 @@ exports.mapStores = async (req,res) => {
   res.json(stores);
 }
 
+// This is the mapPage controller
+exports.mapPage = (req,res) => {
+  res.render('map', {title: 'Map'});
+}
+
 
