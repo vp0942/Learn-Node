@@ -4,6 +4,16 @@ mixin storeCard(store = {})
       .store__actions
         //- pre= h.dump(store.author)
         //- We do not populate the author in this case
+        if user
+          .store__action.store__action--heart
+            form.heart(method='POST', action=`/api/stores/${store._id}/heart`)
+              - const heartString = user.hearts.map(obj => obj.toString())
+              //- pre= h.dump(heartString)
+              //- pre= h.dump(store._id)
+              //- if the store id is in the user's hearts array, add the heart__button--hearted class
+              - const heartClass = heartString.includes(store._id.toString()) ? 'heart__button--hearted' : ''
+              button.heart__button(type='submit' name='heart' class=heartClass)
+                != h.icon('heart')
         if user && store.author.equals(user._id)
           .store__action.store__action--edit
             a(href=`/stores/${store._id}/edit`) Edit

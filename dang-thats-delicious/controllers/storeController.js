@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 // The store model was created in models/Store.js as a mongoose model singleton (supported by mongoose)
 // So now we can just reference it as mongoose.model('Store')
 const Store = mongoose.model('Store');
+// We need to import the User model
+const User = mongoose.model('User');
 // This library is used to handle image uploads
 const multer = require('multer');
 // This library is used to resize images
@@ -195,6 +197,34 @@ exports.mapStores = async (req,res) => {
 // This is the mapPage controller
 exports.mapPage = (req,res) => {
   res.render('map', {title: 'Map'});
+}
+
+// This is the heartStore controller
+exports.heartStore = async (req,res) => {
+  // Get the list of hearts from the user
+  const hearts = req.user.hearts.map(obj => obj.toString()); // Convert the stored ObjectIds to strings to compare them with the store ids
+  // Check if the store id is in the hearts array
+  const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet'; // $pull removes the store id, $addToSet adds it
+                                                                           // $addToSet adds the store id only if it is not already in the array
+                                                                           // This is the same as $push but it does not add duplicates
+  // Add or remove the store id from the hearts list
+  const user = await User.findByIdAndUpdate(
+    req.user._id, // query the user by the id that is stored in the session
+    { [operator]: { hearts: req.params.id } }, // update operator
+     { new: true } // return the new user
+    );
+  res.json(user);
+}
+
+// This is the getHearts controller
+exports.getHearts = async (req,res) => {
+  // Get the list of hearts from the user
+  // $in is a MongoDB operator that finds all stores that have an _id that is in the hearts array of the user
+  const stores = await Store.find({
+    _id: { $in: req.user.hearts }
+  });
+  // res.json(stores);
+  res.render('stores', {title: 'Hearted Stores', stores});
 }
 
 

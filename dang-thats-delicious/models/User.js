@@ -23,6 +23,10 @@ const userSchema = new Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  hearts: [
+    // An array of object ids that reference the Store model
+    { type: mongoose.Schema.ObjectId, ref: 'Store' }
+  ]
 });
 
 // Gravatar is a service for providing globally unique avatars
