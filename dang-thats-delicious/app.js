@@ -54,7 +54,7 @@ app.use(flash());
 // pass variables to our templates + all requests
 app.use((req, res, next) => {
   res.locals.h = helpers; // set variables accessible in templates rendered with res.render
-  res.locals.flashes = req.flash();
+  res.locals.flashes = req.flash(); // req.flash() is a method from the flash middleware that we imported in app.js
   res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
   next();

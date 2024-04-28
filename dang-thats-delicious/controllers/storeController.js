@@ -28,9 +28,10 @@ const jimp = require('jimp');
 // This library is used to generate unique ids
 const uuid = require('uuid');
 
-// This is the homePage controller
+// This is the homePage controller (just for playing around)
+// It is not used in the app (we use the getStores controller instead)
 exports.homePage = (req, res) => {
-  console.log(req.name);
+  // console.log(req.name);
   // req.flash() is a method from the flash middleware that we imported in app.js
   // It is loaded in the res.locals object in app.js
   // req.flash('error', 'Something Happened');

@@ -32,7 +32,7 @@ router.get('/login', userController.loginForm);
 router.post('/login', authController.login);
 router.get('/register', userController.registerForm);
 
-// We a chain of middleware functions to the register route:
+// We chain of middleware functions to the register route:
 // 1. Validate the registration data
 // 2. Register the user
 // 3. Log them in automatically after registration
