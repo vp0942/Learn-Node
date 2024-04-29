@@ -27,4 +27,15 @@ const reviewSchema = new mongoose.Schema({
   }
 });
 
+// This will populate the author field with the author's name and gravatar
+function autopopulate(next) {
+  this.populate('author');
+  next();
+}
+
+// This hook will run the autopopulate function before any find or findOne query
+// and will populate the author field with the author's name and gravatar
+reviewSchema.pre('find', autopopulate);
+reviewSchema.pre('findOne', autopopulate);
+
 module.exports = mongoose.model('Review', reviewSchema);

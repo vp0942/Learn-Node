@@ -128,9 +128,10 @@ exports.updateStore = async (req,res) => {
 exports.getStoreBySlug = async (req,res,next) => {
   // Find the store by the slug
   // We use the populate() method to get the author of the store from the User model
+  // and the reviews of the store from the Review model.
   // The author field in the Store model is a reference to the User model
   // The populate() method will replace the author id with the author object so we can access the author's name and email...
-  const store = await Store.findOne({slug: req.params.slug}).populate('author');
+  const store = await Store.findOne({slug: req.params.slug}).populate('author reviews');
   // If the store does not exist (null), skip to the next middleware
   if (!store) return next();
   res.render('store', {store, title: store.name});

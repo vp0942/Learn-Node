@@ -41,6 +41,12 @@ const storeSchema = new mongoose.Schema({
     ref: "User",
     required: "You must supply an author"
   }
+},{
+  // Virtual fields do not exist in the database, they are created on the fly
+  // They will not be visible by default to JSON or Object although they are still in the model and not a problem for us
+  // We need to set the virtuals option to true to make them visible in the JSON and Object!
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true},
 });
 
 // Define our indexes to improve the performance of our queries
@@ -89,5 +95,13 @@ storeSchema.statics.getTagsList = function() {
     { $sort: { count: -1 } }
   ]);
 };
+
+// Virtual field to populate the reviews of a store
+// Find reviews where the store _id property === to the reviews store property
+storeSchema.virtual("reviews", {
+  ref: "Review", // what model to link : Go to the Review model
+  localField: "_id", // which field on the store : Find reviews where the store field is equal to the _id of the store
+  foreignField: "store" // which field on the review : Look at the store field in the Review model (JOIN with foreign key SQL alike)
+});
 
 module.exports = mongoose.model("Store", storeSchema);
