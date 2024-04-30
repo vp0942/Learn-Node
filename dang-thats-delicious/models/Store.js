@@ -96,12 +96,71 @@ storeSchema.statics.getTagsList = function() {
   ]);
 };
 
+// Static method to get the top stores
+storeSchema.statics.getTopStores = function() {
+  // aggregate is a MongoDB method. MongoDB doesn't understand the virtual fields
+  // we created in the schema with the virtual method of mongoose
+  return this.aggregate([
+    // Lookup stores and populate their reviews
+    {
+      // $lookup is a MongoDB aggregation pipeline stage
+      // It allows us to reference documents in other collections
+      // It is similar to a JOIN in SQL
+      $lookup: {
+        from: "reviews", // what model to link. MongoDB will lowercase and pluralize it: Review -> reviews !
+        localField: "_id", // which field on the store
+        foreignField: "store", // which field on the review
+        as: "reviews" // the name of the field for the reviews
+      }
+    },
+    // Filter for only items that have 2 or more reviews
+    // The first item will be on index 0 - reviews.0 like in an array
+    {
+      $match: { // if a second item exists
+        "reviews.1": { $exists: true }
+      }
+    },
+    // Add the average reviews field
+    // $addFields is a MongoDB aggregation pipeline stage
+    // It adds new fields to documents
+    // $avg is a MongoDB aggregation operator
+    // It calculates the average value of the field passed from the previous pipeline stage (reviews.rating)
+    {
+      $addFields: {
+        averageRating: { $avg: "$reviews.rating" }
+      }
+    },
+    // Sort it by our new field, highest reviews first
+    // -1 is for descending order
+    {
+      $sort: {
+        averageRating: -1
+      }
+    },
+    // Limit to at most 10
+    { $limit: 10 }
+  ]);
+};
+
 // Virtual field to populate the reviews of a store
 // Find reviews where the store _id property === to the reviews store property
-storeSchema.virtual("reviews", {
+storeSchema.virtual("reviews", { // virtual is a capability of mongoose !!!
   ref: "Review", // what model to link : Go to the Review model
   localField: "_id", // which field on the store : Find reviews where the store field is equal to the _id of the store
   foreignField: "store" // which field on the review : Look at the store field in the Review model (JOIN with foreign key SQL alike)
 });
+
+// We will use autopopulate in the storeController to populate the author and reviews fields
+function autopopulate(next) {
+  this.populate("reviews");
+  this.populate("author");
+  next();
+}
+
+// This hook will run the autopopulate function before any find or findOne query
+// and will populate the author and reviews fields in the Store model
+storeSchema.pre("find", autopopulate);
+storeSchema.pre("findOne", autopopulate);
+
 
 module.exports = mongoose.model("Store", storeSchema);

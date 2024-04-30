@@ -229,4 +229,13 @@ exports.getHearts = async (req,res) => {
   res.render('stores', {title: 'Hearted Stores', stores});
 }
 
+// This is the getTopStores controller
+exports.getTopStores = async (req,res) => {
+  // Get the top stores from the getTopStores() static method of the Store model
+  // We prefer to write the logic of the complex queries as static methods in the model instead of the controller
+  const stores = await Store.getTopStores();
+  // res.json(stores);
+  res.render('topStores', {stores, title: '⭐ Top Stores!'});
+}
+
 
